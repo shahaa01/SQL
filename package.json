@@ -19,5 +19,8 @@
   "description": "",
   "devDependencies": {
     "@faker-js/faker": "^9.6.0"
+  },
+  "dependencies": {
+    "mysql2": "^3.14.0"
   }
 }
