@@ -16,6 +16,9 @@ let getRandomUser =  () => {
   //we will use MySQL2 Package which helps to connect node with MySQL
   //lets require it now 
   const mysql = require('mysql2');
+  const express = require('express');
+  const app = express();
+  const PORT = 8080;
 
   //it connects with the database that we created with SQL workbench
   const connection = mysql.createConnection({
@@ -25,18 +28,38 @@ let getRandomUser =  () => {
     password: "Sangita@#1020"
   });
 
-    let query = "SHOW TABLES";
+  //to test if db is connected or not
+  connection.connect((err) => {
+    if(err) {
+      console.error(`Failed to connect: ${err.message}`);
+      return;
+    }
+
+    console.log('Database connected successfully 🚀');
+  });
+
+  //lets create a route
+  app.get('/users', (req, res) => {
+    let query = "select * from providers";
     connection.query(query, (err, results) => {
       if(err) {
-        return `The error is: ${err.message}`;
+        res.send(`The error is: ${err.message}`);
       }
-      console.log(results); //this is an array which stores objects
-      console.log(results.length)
+      for(result of results) {
+        res.json(result); //this is an array which stores objects
+      }
     });
+  });
+  
+    
 
     //the connection doesn't ends by itself - so to end the connection w the database
-    connection.end();
+    // connection.end();
 
 console.log("Things are still working");
+
+app.listen(PORT, () => {
+  console.log(`The server is listening at port ${PORT}`);
+});
 
 //Now lets learn to use SQL from CLI instead of using workbench - refer to notes
