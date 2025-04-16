@@ -46,7 +46,7 @@ let getRandomUser =  () => {
         res.send(`The error is: ${err.message}`);
       }
       for(result of results) {
-        res.json(result); //this is an array which stores objects
+        res.send(result); //this is an array which stores objects
       }
     });
   });
