@@ -1,66 +1,103 @@
-//this is a npm package which will give us fake data which
-//will save the time of creating data for our practice purposes.
-const { faker } = require('@faker-js/faker'); 
+// This is an NPM package that gives us fake data,
+// saving us time when creating test data for practice.
+const { faker } = require('@faker-js/faker');
 
-let getRandomUser =  () => {
-    return {
-      id: faker.string.uuid(),
-      username: faker.internet.username(), // before version 9.1.0, use userName()
-      email: faker.internet.email(),
-      password: faker.internet.password()
-    };
+//This returns an object
+let getRandomUserObject = () => {
+  return {
+    id: faker.string.uuid(),
+    username: faker.internet.username(), // For versions before 9.1.0, use faker.internet.userName()
+    email: faker.internet.email(),
+    password: faker.internet.password()
+  };
+};
+
+//This returns an array
+let getRandomUserArray = () => {
+  return [
+    faker.string.uuid(),
+    faker.internet.username(), // For versions before 9.1.0, use faker.internet.userName()
+    faker.internet.email(),
+    faker.internet.password()
+  ]
+};
+ 
+// Let's learn how to connect Node with MySQL.
+// We'll use the mysql2 package, which helps us connect to a MySQL database.
+
+// Require necessary packages
+const mysql = require('mysql2');
+const express = require('express');
+const app = express();
+const PORT = 8080;
+
+// Create a connection to the MySQL database (created in MySQL Workbench)
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "sarathi",
+  password: "Sangita@#1020"
+});
+
+// Test if the database is connected
+connection.connect((err) => {
+  if (err) {
+    console.error(`Failed to connect: ${err.message}`);
+    return;
   }
+  console.log('Database connected successfully 🚀');
+});
 
+// Create a GET route to fetch all users (providers in this case)
+app.get('/providers', (req, res) => {
+  const query = "SELECT * FROM customer";
 
-  //Lets learn to connect node with mySQL
-  //we will use MySQL2 Package which helps to connect node with MySQL
-  //lets require it now 
-  const mysql = require('mysql2');
-  const express = require('express');
-  const app = express();
-  const PORT = 8080;
-
-  //it connects with the database that we created with SQL workbench
-  const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "sarathi1",
-    password: "Sangita@#1020"
-  });
-
-  //to test if db is connected or not
-  connection.connect((err) => {
-    if(err) {
-      console.error(`Failed to connect: ${err.message}`);
+  connection.query(query, (err, results) => {
+    if (err) {
+      res.send(`The error is: ${err.message}`);
       return;
     }
 
-    console.log('Database connected successfully 🚀');
-  });
-
-  //lets create a route
-  app.get('/users', (req, res) => {
-    let query = "select * from providers";
-    connection.query(query, (err, results) => {
-      if(err) {
-        res.send(`The error is: ${err.message}`);
-      }
-      for(result of results) {
-        //res.send(result); //this is an array which stores objects
-          res.json(result); //this sends the data in proper JSON format
-      }
+    // 'results' is an array of objects, so we can send it directly
+    //res.send(results, [1,2,]); 
+    // //res.send(body) only accepts one arguements, if you pass multiple - other arguments are ignored by JS
+    //to pass multiple arguments you can send a single objects with multiple arrays within it 
+    // or send a 2d array
+    res.send({
+      results: results,
+      extras: [1,2,3,4,5]
     });
+
+    // NOTE: You can't use a loop to send multiple responses with res.send(),
+    // because res.send can only be called once per request.
   });
-  
-    
-
-    //the connection doesn't ends by itself - so to end the connection w the database
-    // connection.end();
-
-console.log("Things are still working");
-
-app.listen(PORT, () => {
-  console.log(`The server is listening at port ${PORT}`);
 });
 
-//Now lets learn to use SQL from CLI instead of using workbench - refer to notes
+//creating a test GET route to insert data into the table
+app.get('/insertUsers', (req, res) => {
+  const query2 = "insert into `user` (id, username, email, password) values (?, ?, ?, ?)";
+  const userData = getRandomUserArray(); //this gives random data - we defined this function above
+  connection.query(query2, userData, (err, results) => {
+    if(err) {
+      console.log(`The error is: ${err.message}`);
+      return;
+    }
+    res.send(results);
+  })
+
+})
+
+
+// NOTE: The connection to the database doesn't end automatically.
+// You can close it manually if needed using connection.end()
+// But we usually keep it open if the app is running and serving multiple requests.
+
+// This line just confirms that the script is running
+console.log("Things are still working...");
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is listening at port ${PORT}`);
+});
+
+// Now let's learn how to use SQL from the CLI instead of Workbench — refer to your notes.
