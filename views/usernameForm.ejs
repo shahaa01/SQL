@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@<%= user.username %></title>
+    <link rel="stylesheet" href="/users.css">
+</head>
+<body>
+    <div class="user">
+        <p>id: <%= user.id %></p>
+        <p>email: <%= user.email %></p>
+        <form action="/usernameForm/<%= user.id %>" method="post">
+            <label for="newUsername">Update your username: </label>
+            <textarea name="newUsername" id="newUsername"><%= user.username %></textarea>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</body>
+</html>

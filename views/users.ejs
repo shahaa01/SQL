@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link rel="stylesheet" href="/users.css">
+</head>
+<body>
+    <div class="container">
+        <% for(let userInfo of allUsersInfo) { %>
+            <div class="user">
+                <p>id: <%= userInfo.id %></p>
+                <p>username:  <%= userInfo.username %></p>
+                <a href="http://localhost:8080/usernameForm/<%= userInfo.id %>"><button> Edit Username </button></a>
+                <p>email:  <%= userInfo.email %></p>
+            </div>
+        <% } %>
+    </div>
+    <a href="http://localhost:8080/newUser"><button>Add User</button></a>
+</body>
+</html>

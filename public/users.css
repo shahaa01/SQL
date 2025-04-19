@@ -1,0 +1,53 @@
+body {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    background-color: pink;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+
+.user {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: maroon;
+    color: white;
+    border-radius: 20px;
+}
+
+.user form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.user form input {
+    height: 40px;
+}
+
+button {
+    display: block;
+    height: 40px;
+    width: 90px;
+    border-radius: 5px;
+
+}
+
+ a {
+    all: unset;
+ }
