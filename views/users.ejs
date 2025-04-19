@@ -14,9 +14,9 @@
                 <p>username:  <%= userInfo.username %></p>
                 <a href="http://localhost:8080/usernameForm/<%= userInfo.id %>"><button> Edit Username </button></a>
                 <p>email:  <%= userInfo.email %></p>
-                <form action="/users/<%= userInfo.id %>?_method=DELETE" method="post">
+                <a href="http://localhost:8080/authUser/<%= userInfo.id %>">
                     <button type="submit">Delete User</button>
-                </form>
+                </a>
             </div>
         <% } %>
     </div>

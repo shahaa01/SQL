@@ -213,41 +213,81 @@ app.post('/newUser', (req, res) => {
   let password = req.body.password;
   let userData = [[userId, username, email, password]]; //for single placeholders 
 
+  let usernameExists = false;
+  let emailExists = false;
+
   let q = "INSERT into `user`(id, username, email, password) values ?"
-  
-  connection.query(q,[userData] , (err, results) => {
+  let uniqueValidationQuery = "SELECT * from `user` where `username` = ? OR `email` = ?";
+
+  connection.query(uniqueValidationQuery, [username, email], (err, results) => {
     if(err) {
-      errorMessage(err);
-      res.send("Sorry");
+      res.send(errorMessage(err));
       return;
     }
 
-    res.redirect('/users');
-  })
 
+    results.forEach((rows) => {
+      if(rows.username === username) usernameExists = true;
+      if(rows.email === email) emailExists = true;
+    });
+
+    if(usernameExists && emailExists) {
+      res.send("Both username and email already exists.")
+    }
+    else if(usernameExists) res.send("Username already exists.");
+    else if(emailExists) res.send("Email already exists.");
+    else {
+      connection.query(q,[userData] , (err, results) => {
+        if(err) {
+          res.send(errorMessage(err));
+          return;
+        }
+    
+        res.redirect('/users');
+      })
+    }  
+  });
+});
+
+//route that asks for pw from user to delete post or edit username
+app.get('/authUser/:id', (req, res) => {
+  const id = req.params.id; //req.params is an object which holds all the parameters inside one object -> Key:Value 
+  let q = "SELECT * from `user` where `id` = ?";
+
+  connection.query(q, [id], (err, results) => {
+    if(err) {
+      res.send(errorMessage(err));
+      return;
+    }
+
+    res.render('authentication', {user: results[0]});
+  })
 });
 
 //route to delete any user
 app.delete('/users/:id', (req, res) => {
   const userId = req.params.id;
-  let q = "DELETE from `user` where `id` = ?";
+  const pw = req.body.password;
+  let q = "DELETE from `user` where `id` = ? AND `password` = ?";
 
-  connection.query(q, [userId], (err, results) => {
+  connection.query(q, [userId, pw], (err, results) => {
     if(err) {
-      errorMessage(err);
-      res.send("Sorry");
+      res.send(errorMessage(err));
       return;
     }
-
-    console.log(results);
+    else if(results.affectedRows === 0) {
+      res.send("Incorrect Password, cannot delete user!")
+    }
+    else {
     res.redirect('/users');
+    }
   }) //either flat array or 2d array wrapped in another array
 })
 
 
 
 let errorMessage = (err) => {
-  console.log(`Your error is ${err.message}`);
+  return (`Your error is ${err.message}`);
 };
 
 // Start the server

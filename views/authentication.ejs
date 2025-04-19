@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication</title>
+    <title>@ <%= user.id %> Authentication</title>
+    <link rel="stylesheet" href="/users.css">
 </head>
 <body>
-    <form action="/"></form>
+    <div class="user">
+        <p>id: <%= user.id %></p>
+        <p>username:  <%= user.username %></p>
+        <p>email:  <%= user.email %></p>
+        <form action="/users/<%= user.id %>?_method=DELETE" method="post">
+            <label for="password">Enter Your Password: </label>
+            <input type="password" name="password" id="password">
+            <button type="submit">Delete User</button>
+        </form>
+    </div>
 </body>
 </html>
