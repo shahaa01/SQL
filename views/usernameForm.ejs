@@ -10,7 +10,7 @@
     <div class="user">
         <p>id: <%= user.id %></p>
         <p>email: <%= user.email %></p>
-        <form action="/usernameForm/<%= user.id %>" method="post">
+        <form action="/usernameForm/<%= user.id %>?_method=PATCH" method="post">
             <label for="newUsername">Update your username: </label>
             <textarea name="newUsername" id="newUsername"><%= user.username %></textarea>
             <button type="submit">Update</button>

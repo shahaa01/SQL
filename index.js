@@ -31,6 +31,7 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 const path = require('path'); 
+const methodOverride = require('method-override');
 
 //setting ejs as view engine
 app.set("view engine", "ejs");
@@ -41,6 +42,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //to use `POST` method in form and to encode the data in req.body use this middleware
 app.use(express.urlencoded({extended: true}));
+
+//to use patch, delete, put
+app.use(methodOverride('_method'));
 
 // Create a connection to the MySQL database (created in MySQL Workbench)
 const connection = mysql.createConnection({
@@ -125,11 +129,6 @@ app.get('/insertBulkUsers', (req, res) => {
 // This line just confirms that the script is running
 console.log("Things are still working...");
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is listening at port ${PORT}`);
-});
-
 // Now let's learn how to use SQL from the CLI instead of Workbench — refer to your notes.
 
 //Lets implement RESTful APIs here and create meaningful routes
@@ -184,7 +183,7 @@ app.get('/usernameForm/:id', (req, res) => {
 });
 
 //route to post the info that is to update the username and to redirect to users route
-app.post('/usernameForm/:id', (req, res) => {
+app.patch('/usernameForm/:id', (req, res) => {
   let userId = req.params.id;
   let q = "update `user` set `username` = ?  where `id` = ?";
   let newUsername = req.body.newUsername;
@@ -226,10 +225,32 @@ app.post('/newUser', (req, res) => {
     res.redirect('/users');
   })
 
-}) 
+});
+
+//route to delete any user
+app.delete('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  let q = "DELETE from `user` where `id` = ?";
+
+  connection.query(q, [userId], (err, results) => {
+    if(err) {
+      errorMessage(err);
+      res.send("Sorry");
+      return;
+    }
+
+    console.log(results);
+    res.redirect('/users');
+  }) //either flat array or 2d array wrapped in another array
+})
 
 
 
 let errorMessage = (err) => {
   console.log(`Your error is ${err.message}`);
 };
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is listening at port ${PORT}`);
+});
